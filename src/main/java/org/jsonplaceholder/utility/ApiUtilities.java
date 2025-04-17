@@ -7,6 +7,7 @@ import io.restassured.response.Response;
 import java.io.InputStream;
 
 import static io.restassured.RestAssured.given;
+import static org.apache.commons.lang3.ClassUtils.getClass;
 
 public class ApiUtilities {
     public ApiUtilities(PropertiesRead propertiesRead){
@@ -55,6 +56,17 @@ public class ApiUtilities {
                 and().assertThat().body(JsonSchemaValidator.matchesJsonSchema(schema)).
                 extract().
                 response();
+    }
+
+    public Response sengPutRequestQuery(String bodyRequest, String URL){
+        return given().
+                contentType(ContentType.JSON).
+                and()
+                .body(bodyRequest)
+                .when()
+                .put(URL)
+                .then()
+                .extract().response();
     }
 }
 
