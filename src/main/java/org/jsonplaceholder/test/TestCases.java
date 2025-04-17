@@ -1,6 +1,5 @@
 package org.jsonplaceholder.test;
 
-
 import com.github.javafaker.Faker;
 import com.google.gson.Gson;
 import io.restassured.response.Response;
@@ -8,50 +7,64 @@ import org.testng.Assert;
 import org.testng.Reporter;
 import org.testng.annotations.Test;
 
-import java.util.Random;
-
 public class TestCases extends BaseClass {
+
+    private static final String POSTS_ENDPOINT = "posts";
+    private static final String POST_ID_ENDPOINT = "posts/1";
+
     private Response response;
 
     /**
-     * Testcase01 - Performs the call to obtain the email of a randomly selected user.
-     */
-    @Test()
-    public void getEmail(){
-        Reporter.log("Test Cases - Get Email", true);
-        Random random = new Random();
-        getPosts().setUserId(random.nextInt(10 - 1 + 1) + 1);
-        setResponse(apiUtilities.sendGetRequest("users/" + getPosts().getUserId()));
-        String email = getResponse().jsonPath().getString("email");
-        Reporter.log("Email - " + email, true);
-    }
-
-    /**
-     * Testcase02 - Validates through the response schema if the id field is a numeric field
+     * Validates through the response schema if the id field is numeric.
      */
     @Test(priority = 1)
-    public void getPostUser(){
+    public void getPostUser() {
         Reporter.log("Test Cases - Get Post User", true);
-        setResponse(apiUtilities.sendGetRequestQuery("posts/", "userId", String.valueOf(getPosts().getUserId()), "PostUserSchema.json"));
-        Assert.assertEquals(getResponse().statusCode(),200 );
+        setResponse(apiUtilities.sendGetRequestWithQuery(POSTS_ENDPOINT, "userId", String.valueOf(getPosts().getUserId()), "PostUserSchema.json"));
+        Assert.assertEquals(getResponse().statusCode(), 200);
     }
 
     /**
-     * Testcase03 - Performs the sending of a post request to register a new publication.
-     * In this case, the faker library is used to generate random data to send the information.
+     * Sends a POST request to register a new publication with random data.
      */
-    @Test(priority = 1)
-    public void postNewPost(){
-        Reporter.log("Test Cases - Post new Post", true);
+    @Test(priority = 2)
+    public void postNewPost() {
+        Reporter.log("Test Cases - Post New Post", true);
 
         Faker faker = new Faker();
         getPosts().setTitle(faker.book().title());
         getPosts().setBody(faker.book().author());
 
-        setResponse(apiUtilities.sendPostRequest(new Gson().toJson(getPosts()), "posts"));
-        Assert.assertEquals(getResponse().statusCode(),201 );
-
+        setResponse(apiUtilities.sendPostRequest(new Gson().toJson(getPosts()), POSTS_ENDPOINT));
+        Assert.assertEquals(getResponse().statusCode(), 201);
         Assert.assertEquals(getResponse().jsonPath().getString("userId"), String.valueOf(getPosts().getUserId()));
+    }
+
+    /**
+     * Sends a PUT request to update an existing post.
+     */
+    @Test(priority = 3)
+    public void putPost() {
+        Reporter.log("Test Cases - Put Post", true);
+
+        Faker faker = new Faker();
+        getPosts().setTitle(faker.book().title());
+        getPosts().setBody(faker.book().author());
+
+        setResponse(apiUtilities.sendPutRequest(new Gson().toJson(getPosts()), POST_ID_ENDPOINT));
+        Assert.assertEquals(getResponse().statusCode(), 200);
+        Assert.assertEquals(getResponse().jsonPath().getString("userId"), String.valueOf(getPosts().getUserId()));
+    }
+
+    /**
+     * Sends a DELETE request to remove a post.
+     */
+    @Test(priority = 4)
+    public void deletePost() {
+        Reporter.log("Test Cases - Delete Post", true);
+
+        setResponse(apiUtilities.sendDeleteRequest(POST_ID_ENDPOINT));
+        Assert.assertEquals(getResponse().statusCode(), 200);
     }
 
     public Response getResponse() {

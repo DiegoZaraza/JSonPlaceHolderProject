@@ -9,36 +9,38 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 
 public class BaseClass {
-    public static String baseURL;
-    public static long timeResponse;
-    public static ApiUtilities apiUtilities;
-    public static PropertiesRead propertiesRead;
+
+    protected static final String CONFIG_FILE = "config.properties";
+    protected static final String URL_KEY = "URL";
+    protected static final String TIME_RESPONSE_KEY = "TIME_RESPONSE";
+
+    protected static String baseURL;
+    protected static long timeResponse;
+    protected static ApiUtilities apiUtilities;
+    protected static PropertiesRead propertiesRead;
     private Posts posts;
 
     /**
-     *
+     * Sets up the application before running tests.
      */
     @BeforeClass
-    public void setupApplication()
-    {
+    public void setupApplication() {
         Reporter.log("=====Base Class Setup Started=====", true);
         propertiesRead = new PropertiesRead();
         apiUtilities = new ApiUtilities(propertiesRead);
-        propertiesRead.getPropertiesFile("config.properties");
+        propertiesRead.getPropertiesFile(CONFIG_FILE);
 
-        RestAssured.baseURI = propertiesRead.returnProperties("URL");
-        timeResponse = Long.parseLong(propertiesRead.returnProperties("TIME_RESPONSE"));
+        RestAssured.baseURI = propertiesRead.returnProperties(URL_KEY);
+        timeResponse = Long.parseLong(propertiesRead.returnProperties(TIME_RESPONSE_KEY));
         posts = new Posts();
         Reporter.log("=====Base Class Setup Complete=====", true);
-
     }
 
     /**
-     *
+     * Cleans up after tests are completed.
      */
     @AfterClass
-    public void closeApplication()
-    {
+    public void closeApplication() {
         Reporter.log("=====Session End=====", true);
     }
 

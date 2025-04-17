@@ -1,13 +1,14 @@
-<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 
-<suite name="APIi2cTests" verbose="1">
-    <test name="EchoAPI">
+<suite name="JSONPlaceholder API Tests" verbose="1">
+    <test name="CRUD Operations on Posts">
         <classes>
             <class name="org.jsonplaceholder.test.TestCases">
                 <methods>
-                    <include name="getEmail"/>
                     <include name="getPostUser"/>
                     <include name="postNewPost"/>
+                    <include name="putPost"/>
+                    <include name="deletePost"/>
                 </methods>
             </class>
         </classes>
