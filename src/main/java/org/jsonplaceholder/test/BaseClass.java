@@ -21,27 +21,32 @@ public class BaseClass {
     private Posts posts;
 
     /**
-     * Sets up the application before running tests.
+     * Initializes the application before running tests.
      */
     @BeforeClass
     public void setupApplication() {
-        Reporter.log("=====Base Class Setup Started=====", true);
-        propertiesRead = new PropertiesRead();
-        apiUtilities = new ApiUtilities(propertiesRead);
-        propertiesRead.getPropertiesFile(CONFIG_FILE);
+        Reporter.log("===== Base Class Setup Started =====", true);
+        try {
+            propertiesRead = new PropertiesRead();
+            apiUtilities = new ApiUtilities(propertiesRead);
+            propertiesRead.getPropertiesFile(CONFIG_FILE);
 
-        RestAssured.baseURI = propertiesRead.returnProperties(URL_KEY);
-        timeResponse = Long.parseLong(propertiesRead.returnProperties(TIME_RESPONSE_KEY));
-        posts = new Posts();
-        Reporter.log("=====Base Class Setup Complete=====", true);
+            RestAssured.baseURI = propertiesRead.returnProperties(URL_KEY);
+            timeResponse = Long.parseLong(propertiesRead.returnProperties(TIME_RESPONSE_KEY));
+            posts = new Posts();
+        } catch (Exception e) {
+            Reporter.log("Error during setup: " + e.getMessage(), true);
+            throw new RuntimeException("Failed to initialize BaseClass", e);
+        }
+        Reporter.log("===== Base Class Setup Complete =====", true);
     }
 
     /**
-     * Cleans up after tests are completed.
+     * Cleans up resources after tests are completed.
      */
     @AfterClass
     public void closeApplication() {
-        Reporter.log("=====Session End=====", true);
+        Reporter.log("===== Session End =====", true);
     }
 
     public Posts getPosts() {

@@ -3,6 +3,7 @@ package org.jsonplaceholder.utility;
 import io.restassured.http.ContentType;
 import io.restassured.module.jsv.JsonSchemaValidator;
 import io.restassured.response.Response;
+import io.restassured.specification.RequestSpecification;
 
 import java.io.InputStream;
 
@@ -10,11 +11,16 @@ import static io.restassured.RestAssured.given;
 
 public class ApiUtilities {
 
+    private final PropertiesRead propertiesRead;
+
     public ApiUtilities(PropertiesRead propertiesRead) {
-        // Constructor logic if needed
+        this.propertiesRead = propertiesRead;
     }
 
-    private static io.restassured.specification.RequestSpecification configureRequest() {
+    /**
+     * Configures the base request with JSON content type.
+     */
+    private static RequestSpecification configureRequest() {
         return given().contentType(ContentType.JSON);
     }
 
